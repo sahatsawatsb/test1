@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "mock": "json-server ./src/db.js --config json-server.json"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -16,6 +17,8 @@
     "@types/node": "18.11.13",
     "@types/react": "18.0.26",
     "@types/react-dom": "18.0.9",
+    "faker": "^6.6.6",
+    "json-server": "^0.17.1",
     "next": "13.0.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
