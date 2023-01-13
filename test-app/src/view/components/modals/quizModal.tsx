@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { AppButton } from "../AppButton";
+import React, { useState } from "react";
 import {
-  Box,
   Button,
   Dialog,
   DialogContent,
@@ -9,12 +7,23 @@ import {
   DialogTitle,
   Grid,
   Paper,
-  Typography,
   styled,
 } from "@mui/material";
 import { colorTheme } from "../../../theme";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 
+export interface Data {
+  questions: IGetQuestions[];
+}
+export interface IGetQuestions {
+  id: number;
+  questionText: string;
+  answerOptions: IGetAnswerOptions[];
+}
+export interface IGetAnswerOptions {
+  answerText: string;
+  isCorrect: boolean;
+}
 const BtnSave = styled(Button)(() => ({
   width: "144px",
   height: "48px",
@@ -29,6 +38,15 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+export async function getServerSideProps() {
+  const res = await fetch(`http://localhost:5000/questions`);
+  const resJson = await res.json();
+  return {
+    props: {
+      data: resJson,
+    },
+  };
+}
 export default function QuizModal(isModalOpen: any) {
   const router = useRouter();
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -37,6 +55,8 @@ export default function QuizModal(isModalOpen: any) {
   const startOver = () => {
     router.reload();
   };
+
+  getServerSideProps();
 
   const questions = [
     {
