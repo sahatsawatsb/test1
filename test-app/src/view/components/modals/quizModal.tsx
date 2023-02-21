@@ -12,22 +12,13 @@ import {
 import { colorTheme } from "../../../theme";
 import { useRouter } from "next/router";
 
-export interface Data {
-  questions: IGetQuestions[];
-}
-export interface IGetQuestions {
-  id: number;
-  questionText: string;
-  answerOptions: IGetAnswerOptions[];
-}
-export interface IGetAnswerOptions {
-  answerText: string;
-  isCorrect: boolean;
-}
 const BtnSave = styled(Button)(() => ({
   width: "144px",
   height: "48px",
-  backgroundColor: colorTheme.$lightGrey.main,
+  backgroundColor: colorTheme.$lightOrange.main,
+  "&:hover": {
+    backgroundColor: colorTheme.$darkGrey.main,
+  },
 }));
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -38,16 +29,7 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export async function getServerSideProps() {
-  const res = await fetch(`http://localhost:5000/questions`);
-  const resJson = await res.json();
-  return {
-    props: {
-      data: resJson,
-    },
-  };
-}
-export default function QuizModal(isModalOpen: any) {
+export default function QuizModal(props: any, { quizData }: any) {
   const router = useRouter();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showScore, setShowScore] = useState(false);
@@ -56,46 +38,45 @@ export default function QuizModal(isModalOpen: any) {
     router.reload();
   };
 
-  getServerSideProps();
-
-  const questions = [
-    {
-      questionText: "What is two plus two?",
-      answerOptions: [
-        { answerText: "3", isCorrect: false },
-        { answerText: "5", isCorrect: false },
-        { answerText: "4", isCorrect: true },
-        { answerText: "1", isCorrect: false },
-      ],
-    },
-    {
-      questionText: "What is two times two?",
-      answerOptions: [
-        { answerText: "23", isCorrect: false },
-        { answerText: "4", isCorrect: true },
-        { answerText: "11", isCorrect: false },
-        { answerText: "22", isCorrect: false },
-      ],
-    },
-    {
-      questionText: "What is two minus two?",
-      answerOptions: [
-        { answerText: "0", isCorrect: true },
-        { answerText: "1", isCorrect: false },
-        { answerText: "2", isCorrect: false },
-        { answerText: "3", isCorrect: false },
-      ],
-    },
-    {
-      questionText: "What is one plus two?",
-      answerOptions: [
-        { answerText: "23", isCorrect: false },
-        { answerText: "12", isCorrect: false },
-        { answerText: "44", isCorrect: false },
-        { answerText: "3", isCorrect: true },
-      ],
-    },
-  ];
+  const questions = props.quizData;
+  // const questions = [
+  //   {
+  //     questionText: "What is two plus two?",
+  //     answerOptions: [
+  //       { answerText: "3", isCorrect: false },
+  //       { answerText: "5", isCorrect: false },
+  //       { answerText: "4", isCorrect: true },
+  //       { answerText: "1", isCorrect: false },
+  //     ],
+  //   },
+  //   {
+  //     questionText: "What is two times two?",
+  //     answerOptions: [
+  //       { answerText: "23", isCorrect: false },
+  //       { answerText: "4", isCorrect: true },
+  //       { answerText: "11", isCorrect: false },
+  //       { answerText: "22", isCorrect: false },
+  //     ],
+  //   },
+  //   {
+  //     questionText: "What is two minus two?",
+  //     answerOptions: [
+  //       { answerText: "0", isCorrect: true },
+  //       { answerText: "1", isCorrect: false },
+  //       { answerText: "2", isCorrect: false },
+  //       { answerText: "3", isCorrect: false },
+  //     ],
+  //   },
+  //   {
+  //     questionText: "What is one plus two?",
+  //     answerOptions: [
+  //       { answerText: "23", isCorrect: false },
+  //       { answerText: "12", isCorrect: false },
+  //       { answerText: "44", isCorrect: false },
+  //       { answerText: "3", isCorrect: true },
+  //     ],
+  //   },
+  // ];
   const handleAnswerButtonClick = (isCorrect: boolean) => {
     if (isCorrect) {
       setScore(score + 1);
@@ -113,8 +94,8 @@ export default function QuizModal(isModalOpen: any) {
     <div>
       {showScore ? (
         <Dialog
-          open={isModalOpen.isOpen}
-          onClose={isModalOpen.onClose}
+          open={props.isOpen}
+          onClose={props.onClose}
           aria-labelledby="alert-ddialog-title"
           aria-describedby="alert-ddialog-description"
         >
@@ -149,8 +130,8 @@ export default function QuizModal(isModalOpen: any) {
         >
           <Dialog
             fullWidth
-            open={isModalOpen.isOpen}
-            onClose={isModalOpen.onClose}
+            open={props.isOpen}
+            onClose={props.onClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
@@ -171,7 +152,7 @@ export default function QuizModal(isModalOpen: any) {
                   sx={{ mx: 1, my: 1 }}
                 >
                   {questions[currentQuestion].answerOptions.map(
-                    (answerOption, index) => (
+                    (answerOption: any, index: number) => (
                       <Grid
                         item
                         xs={2}
